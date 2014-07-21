@@ -36,7 +36,7 @@ class captainshove::captain (
   }
 
   # XXX did easy_install -U distribute
-  # distribute 0.6.10 was too old
+  # on centos6.5 distribute 0.6.10 is too old
   exec {'update-distribute-hack':
       command => "easy_install -U distribute && touch /var/hack-update-distribute-has-run",
       path    => "/usr/bin:/bin",
