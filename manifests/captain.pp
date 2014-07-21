@@ -13,10 +13,10 @@ class captainshove::captain (
   $pip_cache='/tmp/pip_download_cache'
 ){
   exec {'initial-captain-code-install':
-      command => "git clone --recursive $git_url_ui",
+      command => "git clone --recursive $git_url_ui .",
       cwd     => "${install_root}",
       path    => "/usr/bin",
-      unless  => "test -f ${install_root}/captain/.git/index";
+      unless  => "test -f ${install_root}/.git/index";
   }
 
   file {
@@ -45,7 +45,7 @@ class captainshove::captain (
 
   # TODO. Use a fucking cache. This takes forever
   exec{"install-captain-requirements":
-    cwd       => "$install_root/captain/",
+    cwd       => "$install_root/",
     # TODO, variablize dev.txt
     environment => ["PIP_DOWNLOAD_CACHE=$pip_cache"],
     command   => "pip install -r requirements/dev.txt",
@@ -63,21 +63,21 @@ class captainshove::captain (
   }
 
   file {'captain-local.py':
-    path    => "$install_root/captain/captain/settings/local.py",
+    path    => "$install_root/captain/settings/local.py",
     content => template("captainshove/captain-local.py.erb"),
     require => Exec['install-captain-requirements']
   }
 
   exec {'captain-sync-db':
       command => "python manage.py syncdb --noinput",
-      cwd     => "${install_root}/captain/",
+      cwd     => "${install_root}/",
       path    => "/usr/bin",
       require => Exec['install-captain-requirements']
   }
 
   exec {'captain-migrate-db':
       command => "python manage.py migrate",
-      cwd     => "${install_root}/captain/",
+      cwd     => "${install_root}/",
       path    => "/usr/bin",
       require => Exec['captain-sync-db']
   }
@@ -109,7 +109,7 @@ class captainshove::captain (
 
   apache::vhost { "$captain_apache_vhost":
       port                        => '80',
-      docroot                     => "${install_root}/captain/captain",
+      docroot                     => "${install_root}/captain",
       wsgi_application_group      => '%{GLOBAL}',
       wsgi_daemon_process         => 'wsgi',
       wsgi_daemon_process_options => { 
@@ -117,10 +117,10 @@ class captainshove::captain (
         threads      => '15', 
         display-name => '%{GROUP}',
       },
-      wsgi_import_script          => "${install_root}/captain/captain/wsgi.py",
+      wsgi_import_script          => "${install_root}/captain/wsgi.py",
       wsgi_import_script_options  =>
         { process-group => 'wsgi', application-group => '%{GLOBAL}' },
       wsgi_process_group          => 'wsgi',
-      wsgi_script_aliases         => { '/' => "${install_root}/captain/captain/wsgi.py" },
+      wsgi_script_aliases         => { '/' => "${install_root}/captain/wsgi.py" },
   }
 }
