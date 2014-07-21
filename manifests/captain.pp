@@ -4,6 +4,7 @@ class captainshove::captain (
   $captain_rabbit_vhost,
   $web_port,
   $rabbit_host,
+  $rabbit_user,
   $rabbit_pass,
   $rabbit_port=5672,
   $debug=false,
@@ -96,6 +97,11 @@ class captainshove::captain (
   rabbitmq_vhost { "$captain_rabbit_vhost":
     ensure  => present,
     require => Class['rabbitmq'],
+  }
+
+  rabbitmq_user { $rabbit_user:
+      admin    => false,
+      password => $rabbit_pass,
   }
 
   class {
