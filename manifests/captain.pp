@@ -100,8 +100,15 @@ class captainshove::captain (
   }
 
   rabbitmq_user { $rabbit_user:
-      admin    => false,
-      password => $rabbit_pass,
+    admin    => false,
+    password => $rabbit_pass,
+  }
+
+  # TODO, this is insecure. what *should* the permissions be? I don't know.
+  rabbitmq_user_permissions { "$rabbit_user@/":
+    configure_permission => '.*',
+    read_permission      => '.*',
+    write_permission     => '.*',
   }
 
   class {
