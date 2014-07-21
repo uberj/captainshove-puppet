@@ -1,6 +1,7 @@
 class captainshove::shove (
   $install_root,
   $rabbit_host,
+  $rabbit_user,
   $rabbit_pass,
   $rabbit_port=5672,
   $debug=false,
