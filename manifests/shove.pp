@@ -6,6 +6,8 @@ class captainshove::shove (
   $rabbit_port=5672,
   $debug=false,
   $dev=false,
+  $screen_startup=false,
+  $screen_startup_user='root',
   $git_url_ui="https://github.com/mozilla/shove.git"
 ){
 
@@ -32,5 +34,18 @@ class captainshove::shove (
     command   => "python setup.py install",
     path      => "/usr/bin",
     require   => [Package['python-pip'], File['shove-local.py']],
+  }
+  if $screen_startup {
+    package {
+      'screen':
+        ensure  => 'latest'
+    }
+
+    class {'captainshove::screen_startup':
+      rc_path => '/etc/rc.local',
+      command => 'shove',
+      cwd     => $install_root,
+      user    => $screen_startup_user,
+    }
   }
 }

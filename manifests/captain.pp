@@ -1,5 +1,7 @@
 class captainshove::captain (
   $install_root,
+  $screen_startup=true,
+  $screen_startup_user='root',
   $captain_apache_vhost,
   $captain_rabbit_vhost,
   $web_port,
@@ -111,29 +113,43 @@ class captainshove::captain (
     write_permission     => '.*',
   }
 
-  class {
-    'apache':
-      default_mods        => true,
-      default_confd_files => false;
-    'apache::mod::wsgi':
-      wsgi_socket_prefix => '/var/run/wsgi';
-  }
+  if $screen_startup {
+    package {
+      'screen':
+        ensure  => 'latest'
+    }
+
+    class {'captainshove::screen_startup':
+      rc_path => '/etc/rc.local',
+      command => 'python manage.py runserver 127.0.0.1:8000',
+      cwd     => $install_root,
+      user    => $screen_startup_user,
+    }
+  } else {
+    class {
+      'apache':
+        default_mods        => true,
+        default_confd_files => false;
+      'apache::mod::wsgi':
+        wsgi_socket_prefix => '/var/run/wsgi';
+    }
 
 
-  apache::vhost { "$captain_apache_vhost":
-      port                        => '80',
-      docroot                     => "${install_root}/captain",
-      wsgi_application_group      => '%{GLOBAL}',
-      wsgi_daemon_process         => 'wsgi',
-      wsgi_daemon_process_options => { 
-        processes    => '2', 
-        threads      => '15', 
-        display-name => '%{GROUP}',
-      },
-      wsgi_import_script          => "${install_root}/captain/wsgi.py",
-      wsgi_import_script_options  =>
-        { process-group => 'wsgi', application-group => '%{GLOBAL}' },
-      wsgi_process_group          => 'wsgi',
-      wsgi_script_aliases         => { '/' => "${install_root}/captain/wsgi.py" },
+    apache::vhost { "$captain_apache_vhost":
+        port                        => '80',
+        docroot                     => "${install_root}/captain",
+        wsgi_application_group      => '%{GLOBAL}',
+        wsgi_daemon_process         => 'wsgi',
+        wsgi_daemon_process_options => { 
+          processes    => '2', 
+          threads      => '15', 
+          display-name => '%{GROUP}',
+        },
+        wsgi_import_script          => "${install_root}/captain/wsgi.py",
+        wsgi_import_script_options  =>
+          { process-group => 'wsgi', application-group => '%{GLOBAL}' },
+        wsgi_process_group          => 'wsgi',
+        wsgi_script_aliases         => { '/' => "${install_root}/captain/wsgi.py" },
+    }
   }
 }
