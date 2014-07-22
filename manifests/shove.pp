@@ -41,11 +41,10 @@ class captainshove::shove (
         ensure  => 'latest'
     }
 
-    class {'captainshove::screen_startup':
+    class {'captainshove::rc_local':
       rc_path => '/etc/rc.local',
-      command => 'shove',
+      command => "sudo -u $screen_startup_user screen -d -m shove",
       cwd     => $install_root,
-      user    => $screen_startup_user,
     }
   }
 }

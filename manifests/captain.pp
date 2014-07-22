@@ -120,10 +120,9 @@ class captainshove::captain (
     }
 
     # Start the django toy server
-    class {'captainshove::screen_startup':
+    class {'captainshove::rc_local':
       rc_path => '/etc/rc.local',
-      command => "cd $install_root && python manage.py runserver 127.0.0.1:8000",
-      user    => $screen_startup_user,
+      command => "cd $install_root && sudo -u $screen_startup_user screen -d -m python manage.py runserver 127.0.0.1:8000",
       cwd     => $install_root
     }
   } else {
