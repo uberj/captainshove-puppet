@@ -3,9 +3,9 @@ define captainshove::command_snippet (
   $cwd,
   $command
 ) {
-  exec {"add-to-$rc_path":
-    command => "echo '$command' >> $rc_path",
-    unless  => "grep '$command' $rc_path",
+  exec {"add-to-$file_path":
+    command => "echo '$command' >> $file_path",
+    unless  => "grep '$command' $file_path",
     path    => "/usr/bin/:/bin/",
   }
 }

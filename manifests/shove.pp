@@ -42,7 +42,7 @@ class captainshove::shove (
     }
 
     captainshove::command_snippet {'rc.local':
-      rc_path => '/etc/rc.local',
+      file_path => '/etc/rc.local',
       command => "sudo -u $screen_startup_user screen -d -m shove",
       cwd     => $install_root,
     }
