@@ -119,11 +119,12 @@ class captainshove::captain (
         ensure  => 'latest'
     }
 
+    # Start the django toy server
     class {'captainshove::screen_startup':
       rc_path => '/etc/rc.local',
-      command => 'python manage.py runserver 127.0.0.1:8000',
-      cwd     => $install_root,
+      command => "cd $install_root && python manage.py runserver 127.0.0.1:8000",
       user    => $screen_startup_user,
+      cwd     => $install_root
     }
   } else {
     class {
