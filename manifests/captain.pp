@@ -122,7 +122,7 @@ class captainshove::captain (
     # Start the django toy server
     captainshove::command_snippet {'rc.local':
       file_path => '/etc/rc.local',
-      command => "cd $install_root && sudo -u $screen_startup_user screen -S captain -d -m python manage.py runserver 127.0.0.1:8000",
+      command => "cd $install_root && sudo -u $screen_startup_user screen -S captain -d -m python manage.py runserver 0.0.0.0:8000",
       cwd     => $install_root
     }
 
