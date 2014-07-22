@@ -1,5 +1,5 @@
-class captainshove::rc_local (
-  $rc_path,
+define captainshove::command_snippet (
+  $file_path,
   $cwd,
   $command
 ) {
