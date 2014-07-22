@@ -35,6 +35,7 @@ class captainshove::shove (
     path      => "/usr/bin",
     require   => [Package['python-pip'], File['shove-local.py']],
   }
+
   if $screen_startup {
     package {
       'screen':
@@ -43,7 +44,13 @@ class captainshove::shove (
 
     captainshove::command_snippet {'rc.local':
       file_path => '/etc/rc.local',
-      command => "sudo -u $screen_startup_user screen -d -m shove",
+      command => "sudo -u $screen_startup_user screen -S shove -d -m shove",
+      cwd     => $install_root,
+    }
+
+    captainshove::command_snippet {'bash_profile':
+      file_path => "/home/$screen_startup_user/.bash_profile",
+      command => "screen -rd shove",
       cwd     => $install_root,
     }
   }
