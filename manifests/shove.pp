@@ -42,14 +42,6 @@ class captainshove::shove (
         ensure  => 'latest'
     }
 
-    # Start the django toy server
-    exec {'shove-screen':
-      cwd     => $install_root,
-      command => "sudo -u $screen_startup_user screen -S shove -d -m shove",
-      unless  => "screen -ls | grep shove",
-      path    => "/usr/bin/:/bin/",
-    }
-
     captainshove::command_snippet {'bash_profile':
       file_path => "/home/$screen_startup_user/.bash_profile",
       command => "screen -rd shove",

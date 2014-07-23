@@ -119,39 +119,10 @@ class captainshove::captain (
         ensure  => 'latest'
     }
 
-
     captainshove::command_snippet {'bash_profile':
       file_path => "/home/$screen_startup_user/.bash_profile",
       command => "screen -rd captain",
       cwd     => $install_root,
-    }
-
-    # Start the django toy server
-    exec {'captain-screen':
-      cwd     => $install_root,
-      command => "screen -S captain -d -m",
-      unless  => "screen -ls | grep captain",
-      path    => "/usr/bin/:/bin/",
-    }
-
-    exec {'captain-screen-cd-install-root':
-      cwd     => $install_root,
-      # http://superuser.com/a/274071
-      command => "screen -S captain -X stuff 'cd /vagrant && ls'`echo -ne '\015'",
-      unless  => "ps aux | grep 'python manage.py runserver 0.0.0.0:8000' | grep -v grep",
-      path    => "/usr/bin/:/bin/",
-      user    => $screen_startup_user,
-      require => Exec['captain-screen']
-    }
-
-    exec {'captain-screen-start-server':
-      cwd     => $install_root,
-      # http://superuser.com/a/274071
-      command => "screen -S captain -X stuff 'python manage.py runserver 0.0.0.0:8000'`echo -ne '\015'`",
-      unless  => "ps aux | grep 'python manage.py runserver 0.0.0.0:8000' | grep -v grep",
-      path    => "/usr/bin/:/bin/",
-      user    => $screen_startup_user,
-      require => Exec['captain-screen-cd-install-root']
     }
 
   } else {
