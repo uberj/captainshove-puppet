@@ -129,9 +129,29 @@ class captainshove::captain (
     # Start the django toy server
     exec {'captain-screen':
       cwd     => $install_root,
-      command => "sudo -u $screen_startup_user screen -S captain -d -m python manage.py runserver 0.0.0.0:8000",
+      command => "screen -S captain -d -m",
       unless  => "screen -ls | grep captain",
       path    => "/usr/bin/:/bin/",
+    }
+
+    exec {'captain-screen-cd-install-root':
+      cwd     => $install_root,
+      # http://superuser.com/a/274071
+      command => "screen -S captain -X stuff 'cd /vagrant && ls'`echo -ne '\015'",
+      unless  => "ps aux | grep 'python manage.py runserver 0.0.0.0:8000' | grep -v grep",
+      path    => "/usr/bin/:/bin/",
+      user    => $screen_startup_user,
+      require => Exec['captain-screen']
+    }
+
+    exec {'captain-screen-start-server':
+      cwd     => $install_root,
+      # http://superuser.com/a/274071
+      command => "screen -S captain -X stuff 'python manage.py runserver 0.0.0.0:8000'`echo -ne '\015'`",
+      unless  => "ps aux | grep 'python manage.py runserver 0.0.0.0:8000' | grep -v grep",
+      path    => "/usr/bin/:/bin/",
+      user    => $screen_startup_user,
+      require => Exec['captain-screen-cd-install-root']
     }
 
   } else {
