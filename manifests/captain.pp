@@ -119,18 +119,21 @@ class captainshove::captain (
         ensure  => 'latest'
     }
 
-    # Start the django toy server
-    captainshove::command_snippet {'rc.local':
-      file_path => '/etc/rc.local',
-      command => "cd $install_root && sudo -u $screen_startup_user screen -S captain -d -m python manage.py runserver 0.0.0.0:8000",
-      cwd     => $install_root
-    }
 
     captainshove::command_snippet {'bash_profile':
       file_path => "/home/$screen_startup_user/.bash_profile",
       command => "screen -rd captain",
       cwd     => $install_root,
     }
+
+    # Start the django toy server
+    exec {'captain-screen':
+      cwd     => $install_root,
+      command => "sudo -u $screen_startup_user screen -S captain -d -m python manage.py runserver 0.0.0.0:8000",
+      unless  => "screen -ls | grep captain",
+      path    => "/usr/bin/:/bin/",
+    }
+
   } else {
     class {
       'apache':

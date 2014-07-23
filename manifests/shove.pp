@@ -42,10 +42,12 @@ class captainshove::shove (
         ensure  => 'latest'
     }
 
-    captainshove::command_snippet {'rc.local':
-      file_path => '/etc/rc.local',
-      command => "sudo -u $screen_startup_user screen -S shove -d -m shove",
+    # Start the django toy server
+    exec {'shove-screen':
       cwd     => $install_root,
+      command => "sudo -u $screen_startup_user screen -S shove -d -m shove",
+      unless  => "screen -ls | grep shove",
+      path    => "/usr/bin/:/bin/",
     }
 
     captainshove::command_snippet {'bash_profile':
