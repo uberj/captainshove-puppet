@@ -7,8 +7,9 @@ class captainshove::shove (
   $rabbit_port=5672,
   $settings_file='/etc/shove/settings.py'
 ){
-  exec { 'initial-shove':
-      command => "dpkg -i /etc/puppet/mozpuppet/modules/shove-puppet/shove_0.1.4-2_all.deb;apt-get install -yf",
+  # Until we have a working mirror
+  exec { 'install-shove':
+      command => "dpkg -i /etc/mozpuppet/modules/captainshove/shove_0.1.4-2_all.deb;apt-get install -yf",
       path    => "/usr/bin",
   }
 
@@ -19,12 +20,21 @@ class captainshove::shove (
     priority    => '100',
     environment => {
       'SHOVE_SETTINGS_FILE' => $settings_file,
+      'PYTHONPATH'          => '/usr/lib/python2.7/site-packages/:/usr/lib/python2.7/dist-packages/'
     }
   }
 
+  file {[
+    '/etc/',
+    '/etc/shove',
+  ]:
+    ensure => "directory",
+  }
+
   file { 'settings':
-    contents => template("shove/shove-settings.py.erb"),
+    content  => template("captainshove/shove-settings.py.erb"),
     ensure   => file,
-    path     => $settings_file
+    path     => $settings_file,
+    mode     => 644
   }
 }
