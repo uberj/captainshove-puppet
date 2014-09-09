@@ -14,6 +14,13 @@ class captainshove::shove (
       path    => "/usr/bin",
   }
 
+  Supervisord::Supervisorctl['restart-shove'] ->
+  supervisord::program['shove'] ->
+  Class['supervisord'] ->
+  Exec['install-shove'] ->
+  File['shove-settings'] ->
+  File['/etc/shove/']
+
   class { 'supervisord':}
 
   supervisord::program { 'shove':
@@ -38,11 +45,10 @@ class captainshove::shove (
   ]:
     ensure => "directory",
   }
-
-  file { 'settings':
+  file { 'shove-settings':
     content  => template("captainshove/shove-settings.py.erb"),
     ensure   => file,
     path     => $settings_file,
-    mode     => 644
+    mode     => 644,
   }
 }
