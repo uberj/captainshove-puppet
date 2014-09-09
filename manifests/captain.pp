@@ -1,7 +1,5 @@
 class captainshove::captain (
   $install_root,
-  $screen_startup=true,
-  $screen_startup_user='root',
   $captain_apache_vhost,
   $captain_rabbit_vhost,
   $web_port,
