@@ -25,6 +25,11 @@ class captainshove::shove (
     }
   }
 
+  supervisord::supervisorctl { 'restart-shove':
+    command => 'restart',
+    process => 'shove'
+  }
+
   file {[
     '/etc/',
     '/etc/shove',
