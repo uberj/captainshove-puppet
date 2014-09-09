@@ -19,6 +19,7 @@ class captainshove::shove (
   supervisord::program { 'shove':
     command     => 'shove',
     priority    => '100',
+    autostart   => true,
     environment => {
       'SHOVE_SETTINGS_FILE' => $settings_file,
       'PYTHONPATH'          => '/usr/lib/python2.7/site-packages/:/usr/lib/python2.7/dist-packages/'
@@ -27,7 +28,8 @@ class captainshove::shove (
 
   supervisord::supervisorctl { 'restart-shove':
     command => 'restart',
-    process => 'shove'
+    process => 'shove',
+    require => Supervisord::Program['shove']
   }
 
   file {[
