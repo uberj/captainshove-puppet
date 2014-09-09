@@ -4,6 +4,7 @@ class captainshove::shove (
   $rabbit_pass,
   $rabbit_vhost,
   $project_path,
+  $project_name,
   $rabbit_port=5672,
   $settings_file='/etc/shove/settings.py'
 ){
