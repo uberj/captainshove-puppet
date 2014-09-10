@@ -21,10 +21,9 @@ class captainshove::shove (
     require  => Package['python-pika']
   }
 
-  Supervisord::Supervisorctl['restart-shove'] ->
-  Package['shove'] ->
   File['shove-settings'] ->
-  File['/etc/shove/']
+  Package['shove'] ->
+  Supervisord::Supervisorctl['restart-shove']
 
   class { 'supervisord':}
 
@@ -50,10 +49,12 @@ class captainshove::shove (
   ]:
     ensure => "directory",
   }
+
   file { 'shove-settings':
     content  => template("captainshove/shove-settings.py.erb"),
     ensure   => file,
     path     => $settings_file,
     mode     => 644,
+    require  => File['/etc/shove/']
   }
 }
