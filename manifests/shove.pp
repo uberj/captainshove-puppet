@@ -9,15 +9,20 @@ class captainshove::shove (
   $settings_file='/etc/shove/settings.py'
 ){
   # Until we have a working mirror
-  exec { 'install-shove':
-      command => "dpkg -i /etc/mozpuppet/modules/captainshove/shove_0.1.4-2_all.deb;apt-get install -yf",
-      path    => "/usr/bin",
+  package { 'python-pika':
+    provider => 'apt',
+    ensure   => installed
+  }
+
+  package { 'shove':
+    provider => 'dpkg',
+    source   => "/etc/mozpuppet/modules/captainshove/shove_0.1.4-2_all.deb",
+    ensure   => installed,
+    require  => Package['python-pika']
   }
 
   Supervisord::Supervisorctl['restart-shove'] ->
-  supervisord::program['shove'] ->
-  Class['supervisord'] ->
-  Exec['install-shove'] ->
+  Package['shove'] ->
   File['shove-settings'] ->
   File['/etc/shove/']
 
