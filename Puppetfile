@@ -1,9 +1,9 @@
-forge "http://forge.puppetlabs.com"
+forge "https://forgeapi.puppetlabs.com"
 
-mod 'rabbitmq',
+mod 'puppetlabs-rabbitmq',
     :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq.git',
     :ref => 'master'
 
-mod 'apache',
+mod 'puppetlabs-apache',
     :git => 'https://github.com/puppetlabs/puppetlabs-apache.git',
     :ref => 'master'
